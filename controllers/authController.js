@@ -4,10 +4,12 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 
 const login = asyncHandler(async (req, res) => {
+  console.log("Login Function");
+
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.status(400).json({ messge: "All field ate required" });
+    return res.status(400).json({ messge: "All field are required" });
   }
 
   const foundUser = await User.findOne({ username }).exec();
@@ -22,17 +24,17 @@ const login = asyncHandler(async (req, res) => {
 
   const accessToken = jwt.sign(
     {
-      UserInfo: {
-        username: foundUser.username,
-        roles: foundUser.roles,
-      },
+      "UserInfo": {
+        "username": foundUser.username,
+        "role": foundUser.role,
+      }
     },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: "15m" }
   );
 
   const refreshToken = jwt.sign(
-    { username: foundUser.username },
+    { "username": foundUser.username },
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: "7d" }
   );
@@ -68,9 +70,9 @@ const refresh = (req, res) => {
 
       const accessToken = jwt.sign(
         {
-          UserInfo: {
-            username: foundUser.username,
-            roles: foundUser.roles,
+          "UserInfo": {
+            "username": foundUser.username,
+            "role": foundUser.role,
           },
         },
         process.env.ACCESS_TOKEN_SECRET,
